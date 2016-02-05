@@ -8,6 +8,16 @@ export default function Generator(generatorString, opts) {
 		return new Generator(`repeat:${match[1]}:${match[2]}`, opts);
 	}
 
+	// Deal with 1-10
+	if ((match = /^\d+-\d+$/.exec(generatorString))) {
+		return new Generator(`number:${match[0]}`);
+	}
+
+	// Deal with A-Z
+	if ((match = /^[a-z]-[a-z]$/i.exec(generatorString))) {
+		return new Generator(`char:${match[0]}`)
+	}
+
 	let splitString = [''];
 	let inBrackets = false;
 

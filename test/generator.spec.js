@@ -39,6 +39,18 @@ describe('Generator function', function () {
 			generator._type.should.equal('repeat');
 			generator._args.should.deepEqual(['3', 'test']);
 		});
+
+		it('should handle number ranges', function () {
+			let generator = new Generator('10-2000');
+			generator._type.should.equal('number');
+			generator._args.should.deepEqual(['10-2000']);
+		});
+
+		it('should handle character ranges', function () {
+			let generator = new Generator('F-M');
+			generator._type.should.equal('char');
+			generator._args.should.deepEqual(['F-M']);
+		});
 	});
 
 	describe('Resolving', function () {

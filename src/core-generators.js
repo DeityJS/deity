@@ -28,7 +28,10 @@ export function number(options, range, precision) {
 
 export function int(options, range) {
 	return new Range(range).getRandomInt();
+}
 
+export function char(options, range) {
+	return new Range(range).getRandom();
 }
 
 export function boolean(options, bias = 0.5) {

@@ -101,3 +101,5 @@ Todo
 - Finish tests
 - Plugins
 - Travis
+- Async + promises
+- Fix potential subgenerator performance issues
