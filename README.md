@@ -44,6 +44,7 @@ Deity can generate the string for you to test. The following will generate 100
 random strings of lengths between 5 and 10 characters and test the `reverse()`
 function with them:
 
+```js
 describe('reverse()', function () {
 	it('should return reversed string', function () {
 		deity('string:5-10', function (str) {
