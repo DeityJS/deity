@@ -93,3 +93,10 @@ Todo
 ## Plugins and custom generators
 
 - randomuser.me
+
+## Todo
+
+- Finish writing generators
+- Finish tests
+- Plugins
+- Travis
