@@ -185,12 +185,25 @@ describe('Core generators', function () {
 		});
 	});
 
-	describe('array', function () {
+	describe('oneOf', function () {
 		it('should pick a random generator', function () {
-			let arrayGenerator = generators.array({}, 'int:4-4', 'int:7-7');
+			let oneOfGenerator = generators.oneOf({}, 'int:4-4', 'int:7-7');
 			repeat(20, function () {
-				let randomGenerator = arrayGenerator.next().value;
+				let randomGenerator = oneOfGenerator.next().value;
 				randomGenerator.should.be.oneOf([4, 7]);
+			});
+		});
+	});
+
+	describe('array', function () {
+		it('should make an array of generators', function () {
+			let arrayGenerator = generators.array({}, 'int:4-5', 'number:7-8');
+
+			repeat(20, function () {
+				let array = arrayGenerator.next().value;
+				array.should.have.length(2);
+				array[0].should.be.oneOf([4, 5]);
+				array[1].should.be.within(7, 8);
 			});
 		});
 	});

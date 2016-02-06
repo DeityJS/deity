@@ -69,12 +69,20 @@ export function* boolean(options, bias = 0.5) {
 	}
 }
 
-export function* array(options, ...generators) {
+export function* oneOf(options, ...generators) {
 	generators = generators.map((str) => new Generator(str));
 
 	while (true) {
 		let generator = getRandomElementOf(generators);
 		yield generator.resolve();
+	}
+}
+
+export function* array(options, ...generators) {
+	generators = generators.map((str) => new Generator(str));
+
+	while (true) {
+		yield generators.map((generator) => generator.resolve());
 	}
 }
 
