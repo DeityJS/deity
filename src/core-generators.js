@@ -5,17 +5,25 @@ import Generator from './generator';
 import { getRandomElementOf, isNumeric } from './util';
 
 export function* string(options, range = '10-20') {
-	range = new Range(range);
+	if (/^\d+-\d+$/.test(range)) {
+		range = new Range(range);
 
-	while (true) {
-		let length = range.getRandomInt();
-		let str = '';
+		while (true) {
+			let length = range.getRandomInt();
+			let str = '';
 
-		for (let i = 0; i < length; i++) {
-			str += getRandomElementOf(options.letters);
+			for (let i = 0; i < length; i++) {
+				str += getRandomElementOf(options.letters);
+			}
+
+			yield str;
 		}
+	} else {
+		let generator = new Generator(range);
 
-		yield str;
+		while (true) {
+			yield generator.resolve().toString();
+		}
 	}
 }
 
@@ -84,5 +92,17 @@ export function* literal(options, json) {
 
 	while (true) {
 		yield returnValue;
+	}
+}
+
+export function* entry(options, prop = 'collection') {
+	let collection = options[prop];
+
+	if (!collection) {
+		throw new Error(`Collection ${prop} not found`);
+	}
+
+	while (true) {
+		yield getRandomElementOf(collection);
 	}
 }

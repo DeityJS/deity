@@ -48,6 +48,19 @@ describe('Core generators', function () {
 				randomString.length.should.be.within(10, 20);
 			});
 		});
+
+		it('should support converting other generators into strings', function () {
+			let stringNumberGenerator = generators.string({}, 'int:0-10');
+
+			repeat(20, function () {
+				let randomStringNumber = stringNumberGenerator.next().value;
+				randomStringNumber.should.be.type('string');
+
+				let randomNumber = Number(randomStringNumber);
+				randomNumber.should.be.within(0, 10);
+				(randomNumber % 1).should.equal(0);
+			});
+		});
 	});
 
 	describe('number', function () {
@@ -203,6 +216,44 @@ describe('Core generators', function () {
 
 			let generatedObject = generators.literal({}, JSON.stringify(object));
 			generatedObject.next().value.should.deepEqual(object);
+		});
+	});
+
+	describe('entry', function () {
+		it('should get a random entry of an array', function () {
+			let collection = [4, 7, 10, 15];
+
+			let entryGenerator = generators.entry({ collection });
+
+			repeat(20, function () {
+				let entry = entryGenerator.next().value;
+				entry.should.be.oneOf(collection);
+			});
+		});
+
+		it('should support alternative properties', function () {
+			let ary = [4, 7, 10, 15];
+
+			let entryGenerator = generators.entry({ ary }, 'ary');
+
+			repeat(20, function () {
+				let entry = entryGenerator.next().value;
+				entry.should.be.oneOf(ary);
+			});
+		});
+
+		it('should get random entry of an object', function () {
+			let collection = {
+				foo: 'bar',
+				hello: 'world'
+			};
+
+			let entryGenerator = generators.entry({ collection });
+
+			repeat(20, function () {
+				let entry = entryGenerator.next().value;
+				entry.should.be.oneOf(['bar', 'world']);
+			});
 		});
 	});
 });

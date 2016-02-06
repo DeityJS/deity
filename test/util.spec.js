@@ -45,5 +45,10 @@ describe('Utility functions', function () {
 			util.getRandomElementOf(new Range('2-2')).should.equal(2);
 			util.getRandomElementOf(new Range('2-4')).should.be.within(2, 4);
 		});
+
+		it('should get values from objects', function () {
+			let obj = { one: 'two', three: 'four' };
+			util.getRandomElementOf(obj).should.be.oneOf(['two', 'four']);
+		});
 	});
 });
