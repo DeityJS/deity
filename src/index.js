@@ -6,6 +6,14 @@ import generators from './core-generators';
 
 import objectAssign from 'object-assign';
 
+/**
+ * Takes a given generator and calls a function a number of times with some
+ * random strings or something.
+ *
+ * @param {string} generatorString String to create a generator from.
+ * @param {object} [opts] Optional options, such as number of iterations.
+ * @param {function} fn The function to call.
+ */
 export default function deity(generatorString, opts, fn) {
 	if (typeof opts === 'function') {
 		fn = opts;
@@ -21,6 +29,14 @@ export default function deity(generatorString, opts, fn) {
 	}
 }
 
+/**
+ * Add a new generator or generators. Accepts either a single named a function,
+ * a name and a function, or an object containing keys as names and functions.
+ *
+ * @param {string|object} [key] The name of the generator, or an object of
+ *                              multiple generators.
+ * @param {function} fn A generator function. If named, key is optional.
+ */
 deity.extend = function (key, fn) {
 	if (typeof key === 'function' && key.name) {
 		generators[key.name] = key;
@@ -33,6 +49,7 @@ deity.extend = function (key, fn) {
 	}
 };
 
+// Default configuration, merged with opts in the deity function.
 deity.defaultOptions = {
 	iterations: 100,
 	//letters: '1234567890ABCdefghjKLMNOpQRs',

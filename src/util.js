@@ -1,21 +1,34 @@
-export function isNumeric(obj) {
-	if (Array.isArray(obj)) {
+/**
+ * Tests whether a variable is a number, or a numeric string.
+ *
+ * @param {string|number} maybeStr The variable to test.
+ * @returns {boolean} True if numeric.
+ */
+export function isNumeric(maybeStr) {
+	if (Array.isArray(maybeStr)) {
 		return false;
 	}
 
-	return Math.abs(obj - parseFloat(obj)) + Number.EPSILON > 0;
+	return Math.abs(maybeStr - parseFloat(maybeStr)) + Number.EPSILON > 0;
 }
 
-export function getRandomElementOf(list) {
-	if (typeof list.getRandom === 'function') {
-		return list.getRandom();
+/**
+ * Gets a random element from a collection such as an object, array, or string
+ * (where it gets a single character).
+ *
+ * @param {object|Array|string|Range} collection Thing to get the element from.
+ * @returns {*} Element from the collection.
+ */
+export function getRandomElementOf(collection) {
+	if (typeof collection.getRandom === 'function') {
+		return collection.getRandom();
 	}
 
-	if (list.length) {
-		return list[Math.floor(Math.random() * list.length)];
+	if (collection.length) {
+		return collection[Math.floor(Math.random() * collection.length)];
 	}
 
-	return list[getRandomElementOf(Object.keys(list))];
+	return collection[getRandomElementOf(Object.keys(collection))];
 }
 
 /**
@@ -26,7 +39,7 @@ export function getRandomElementOf(list) {
  * @param {Promise|*} resolved A value that might be a promise.
  * @param {function} fn Transform function. Not a callback.
  * @returns {Promise|*} Either the transformed function, or a new promise
- * 											adding the transform function to specified promise.
+ *                      adding the transform function to specified promise.
  */
 export function getYieldValue(resolved, fn) {
 	if (typeof resolved.then === 'function') {

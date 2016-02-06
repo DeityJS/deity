@@ -1,5 +1,14 @@
 import generators from './core-generators';
 
+/**
+ * Create an object with a resolve method that can be called to generate
+ * random values from a given generator.
+ *
+ * @param {string} generatorString The string to be parsed to create the
+ *                                 generator.
+ * @param {object} [opts] Options. Configuration. Stuff.
+ * @constructor
+ */
 export default function Generator(generatorString, opts) {
 	let match;
 
