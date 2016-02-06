@@ -97,7 +97,6 @@ Todo
 
 ## Todo
 
-- Plugins
 - Async + promises
 - Compiled code in /dist
 - Docs

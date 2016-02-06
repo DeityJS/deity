@@ -49,7 +49,17 @@ export default function Generator(generatorString, opts) {
 
 	let generator = generators[type](opts, ...args);
 
-	this.resolve = function () {
-		return generator.next().value;
+	this.resolve = function (cb) {
+		let value = generator.next().value;
+
+		if (typeof cb === 'function') {
+			if (typeof value.then === 'function') {
+				value.then(cb);
+			} else {
+				cb(value)
+			}
+		} else {
+			return value;
+		}
 	};
 }

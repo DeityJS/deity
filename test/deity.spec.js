@@ -2,6 +2,20 @@ import regeneratorRuntime from 'regenerator/runtime-module';
 import deity from '../src/index';
 
 describe('Deity', function () {
+	before(function () {
+		deity.extend('async', function* (options, val = 'test') {
+			let promise = new Promise(function (resolve) {
+				setTimeout(resolve, 20);
+			});
+
+			while (true) {
+				yield promise.then(function () {
+					return val;
+				});
+			}
+		});
+	});
+
 	it('should call a generator x times', function () {
 		let timesCalled = 0;
 
@@ -19,6 +33,20 @@ describe('Deity', function () {
 		deity('number:1-100', function (newValue) {
 			newValue.should.not.equal(lastValue);
 			lastValue = newValue;
+		});
+	});
+
+	it('should support async generators', function (done) {
+		let iterations = 100;
+		let time = Date.now();
+
+		deity('async:callum', { iterations }, function (val) {
+			val.should.equal('callum');
+			(Date.now() - time).should.be.within(20, 30);
+
+			if (--iterations === 0) {
+				done();
+			}
 		});
 	});
 

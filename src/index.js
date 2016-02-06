@@ -15,7 +15,7 @@ export default function deity(generatorString, opts, fn) {
 	let generator = new Generator(generatorString, opts);
 
 	for (let i = 0; i < opts.iterations; i++) {
-		fn(generator.resolve());
+		generator.resolve(fn);
 	}
 }
 

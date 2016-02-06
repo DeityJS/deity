@@ -51,4 +51,25 @@ describe('Utility functions', function () {
 			util.getRandomElementOf(obj).should.be.oneOf(['two', 'four']);
 		});
 	});
+
+	describe('getYieldValue()', function () {
+		it('should transform values', function () {
+			let result = util.getYieldValue('test', (a) => a + a);
+			result.should.equal('testtest');
+		});
+
+		it('should transform promises', function (done) {
+			let resolveHello = new Promise(function (resolve) {
+				setTimeout(function () {
+					resolve('hello');
+				});
+			});
+
+			let promise = util.getYieldValue(resolveHello, (a) => a + a);
+			promise.then(function (result) {
+				result.should.equal('hellohello');
+				done();
+			});
+		});
+	});
 });

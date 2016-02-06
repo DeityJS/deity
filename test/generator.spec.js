@@ -1,3 +1,6 @@
+import regeneratorRuntime from 'regenerator/runtime-module';
+
+import deity from '../src/index';
 import Generator from '../src/generator';
 
 describe('Generator function', function () {
@@ -80,6 +83,20 @@ describe('Generator function', function () {
 	});
 
 	describe('Resolving', function () {
+		before(function () {
+			deity.extend('async', function* () {
+				let promise = new Promise(function (resolve) {
+					setTimeout(resolve, 20);
+				});
+
+				while (true) {
+					yield promise.then(function () {
+						return 'test';
+					});
+				}
+			});
+		});
+
 		it('should have a resolve function', function () {
 			let generator = new Generator('number:1-5');
 			generator.resolve.should.be.a.Function();
@@ -89,6 +106,16 @@ describe('Generator function', function () {
 			let generator = new Generator('number:1-5');
 			generator.resolve().should.be.a.Number();
 			generator.resolve().should.be.within(1, 5);
+		});
+
+		it('should support asyncronous generators', function (done) {
+			let generator = new Generator('async');
+			let time = Date.now();
+
+			generator.resolve(function () {
+				(Date.now() - time).should.be.within(20, 30);
+				done();
+			});
 		});
 	});
 });

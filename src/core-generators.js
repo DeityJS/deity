@@ -2,7 +2,7 @@ import regeneratorRuntime from 'regenerator/runtime-module';
 
 import Range from './range';
 import Generator from './generator';
-import { getRandomElementOf, isNumeric } from './util';
+import { getRandomElementOf, isNumeric, getYieldValue } from './util';
 
 export function* string(options, range = '10-20') {
 	if (/^\d+-\d+$/.test(range)) {
@@ -22,7 +22,8 @@ export function* string(options, range = '10-20') {
 		let generator = new Generator(range);
 
 		while (true) {
-			yield generator.resolve().toString();
+			let resolved = generator.resolve();
+			yield getYieldValue(resolved, (val) => val.toString());
 		}
 	}
 }
@@ -82,7 +83,10 @@ export function* array(options, ...generators) {
 	generators = generators.map((str) => new Generator(str));
 
 	while (true) {
-		yield generators.map((generator) => generator.resolve());
+		let all = generators.map((generator) => generator.resolve());
+
+		// Promise.all will resolve immediately if none of the values are promises
+		yield Promise.all(all);
 	}
 }
 
@@ -90,8 +94,8 @@ export function* repeat(options, n, generatorString) {
 	let generator = new Generator(generatorString);
 
 	while (true) {
-		let value = generator.resolve();
-		yield new Array(n + 1).join(value);
+		let resolved = generator.resolve();
+		yield getYieldValue(resolved, (val) => new Array(n + 1).join(val));
 	}
 }
 

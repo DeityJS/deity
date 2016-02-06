@@ -1,7 +1,23 @@
+import regeneratorRuntime from 'regenerator/runtime-module';
+import deity from '../src/index';
 import Range from '../src/range';
 import * as generators from '../src/core-generators';
 
 describe('Core generators', function () {
+	before(function () {
+		deity.extend('async', function* (options, val = 'test') {
+			let promise = new Promise(function (resolve) {
+				setTimeout(resolve, 20);
+			});
+
+			while (true) {
+				yield promise.then(function () {
+					return val;
+				});
+			}
+		});
+	});
+
 	describe('string', function () {
 		it('should return a string of random length', function () {
 			let options = {
@@ -59,6 +75,18 @@ describe('Core generators', function () {
 				let randomNumber = Number(randomStringNumber);
 				randomNumber.should.be.within(0, 10);
 				(randomNumber % 1).should.equal(0);
+			});
+		});
+
+		it('should support converting async generators into strings', function (done) {
+			let generator = generators.string({}, 'async:2');
+			let generated = generator.next().value;
+
+			let time = Date.now();
+			generated.then(function (two) {
+				(Date.now() - time).should.be.within(20, 30);
+				two.should.equal('2');
+				done();
 			});
 		});
 	});
@@ -196,14 +224,46 @@ describe('Core generators', function () {
 	});
 
 	describe('array', function () {
-		it('should make an array of generators', function () {
+		it('should make an array of generators', function (done) {
 			let arrayGenerator = generators.array({}, 'int:4-5', 'number:7-8');
 
-			repeat(20, function () {
-				let array = arrayGenerator.next().value;
-				array.should.have.length(2);
-				array[0].should.be.oneOf([4, 5]);
-				array[1].should.be.within(7, 8);
+			let remaining = 20;
+
+			repeat(remaining, function () {
+				let promise = arrayGenerator.next().value;
+				promise.should.be.instanceof(Promise);
+
+				promise.then(function (vals) {
+					vals[0].should.be.oneOf([4, 5]);
+					vals[1].should.be.within(7, 8);
+
+					if (--remaining === 0) {
+						done();
+					}
+				});
+			});
+		});
+
+		it('should work with async values', function (done) {
+			let arrayGenerator = generators.array({}, 'async', 'int:4-5', 'async:foobar');
+
+			let remaining = 3;
+			let time = Date.now();
+
+			repeat(remaining, function () {
+				let promise = arrayGenerator.next().value;
+
+				promise.then(function (vals) {
+					vals.length.should.equal(3);
+					vals[0].should.equal('test');
+					vals[1].should.be.oneOf([4, 5]);
+					vals[2].should.equal('foobar');
+					(Date.now() - time).should.be.within(20, 30);
+
+					if (--remaining === 0) {
+						done();
+					}
+				});
 			});
 		});
 	});
@@ -212,6 +272,26 @@ describe('Core generators', function () {
 		it('should repeat a generator n times', function () {
 			let nStrings = generators.repeat({}, 3, 'int:3-3');
 			nStrings.next().value.should.equal('333');
+		});
+
+		it('should work with async generators', function (done) {
+			let generator = generators.repeat({}, 3, 'async:buzz');
+
+			let remaining = 3;
+			let time = Date.now();
+
+			repeat(remaining, function () {
+				let promise = generator.next().value;
+
+				promise.then(function (vals) {
+					vals.should.equal('buzzbuzzbuzz');
+					(Date.now() - time).should.be.within(20, 30);
+
+					if (--remaining === 0) {
+						done();
+					}
+				});
+			});
 		});
 	});
 
