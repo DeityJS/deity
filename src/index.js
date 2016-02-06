@@ -19,6 +19,18 @@ export default function deity(generatorString, opts, fn) {
 	}
 }
 
+deity.extend = function (key, fn) {
+	if (typeof key === 'function' && key.name) {
+		generators[key.name] = key;
+	} else if (typeof key === 'object') {
+		for (let pluginName of Object.keys(key)) {
+			generators[pluginName] = key[pluginName];
+		}
+	} else {
+		generators[key] = fn;
+	}
+};
+
 deity.generators = generators;
 
 deity.defaultOptions = {
