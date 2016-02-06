@@ -37,12 +37,17 @@ describe('Deity', function () {
 	});
 
 	it('should support async generators', function (done) {
-		let iterations = 100;
+		let iterations = 50;
 		let time = Date.now();
 
 		deity('async:callum', { iterations }, function (val) {
-			val.should.equal('callum');
-			(Date.now() - time).should.be.within(20, 30);
+			try {
+				val.should.equal('callum');
+				(Date.now() - time).should.be.within(20, 60);
+			} catch (e) {
+				// Not sure why I need to catch this myself?
+				done(e);
+			}
 
 			if (--iterations === 0) {
 				done();
