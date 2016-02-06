@@ -31,8 +31,6 @@ deity.extend = function (key, fn) {
 	}
 };
 
-deity.generators = generators;
-
 deity.defaultOptions = {
 	iterations: 100,
 	//letters: '1234567890ABCdefghjKLMNOpQRs',
