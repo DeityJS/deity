@@ -3,33 +3,39 @@ import Generator from '../src/generator';
 describe('Generator function', function () {
 	describe('Parsing', function () {
 		it('should handle simple types', function () {
-			let generator = new Generator('foobar');
-			generator._type.should.equal('foobar');
+			let generator = new Generator('string');
+			generator._type.should.equal('string');
 			generator._args.should.deepEqual([]);
 		});
 
 		it('should handle types with single arguments', function () {
-			let generator = new Generator('foobar:test');
-			generator._type.should.equal('foobar');
+			let generator = new Generator('string:test');
+			generator._type.should.equal('string');
 			generator._args.should.deepEqual(['test']);
 		});
 
 		it('should handle types with multiple arguments', function () {
-			let generator = new Generator('foobar:test:two');
-			generator._type.should.equal('foobar');
+			let generator = new Generator('string:test:two');
+			generator._type.should.equal('string');
 			generator._args.should.deepEqual(['test', 'two']);
 		});
 
 		it('should handle types with generator arguments', function () {
-			let generator = new Generator('foobar:(test:test)');
-			generator._type.should.equal('foobar');
+			let generator = new Generator('string:(test:test)');
+			generator._type.should.equal('string');
 			generator._args.should.deepEqual(['test:test']);
 		});
 
 		it('should handle types with multiple generator arguments', function () {
-			let generator = new Generator('foobar:(a:b):(test:test)');
-			generator._type.should.equal('foobar');
+			let generator = new Generator('string:(a:b):(test:test)');
+			generator._type.should.equal('string');
 			generator._args.should.deepEqual(['a:b', 'test:test']);
+		});
+
+		it('should have a useful error when generator not found', function () {
+			(function () {
+				new Generator('foobar');
+			}).should.throw(/Generator "foobar" not found/);
 		});
 	});
 

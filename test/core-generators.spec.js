@@ -9,9 +9,10 @@ describe('Core generators', function () {
 			};
 
 			let lettersArray = options.letters.split('');
+			let stringGenerator = generators.string(options, '5-10')
 
 			repeat(20, function () {
-				let randomString = generators.string(options, '5-10');
+				let randomString = stringGenerator.next().value;
 				randomString.length.should.be.within(5, 10);
 
 				randomString.split('').forEach(function (char) {
@@ -26,9 +27,10 @@ describe('Core generators', function () {
 			};
 
 			let lettersArray = 'ABCDEFG'.split('');
+			let stringGenerator = generators.string(options, '5-10');
 
 			repeat(20, function () {
-				let randomString = generators.string(options, '5-10');
+				let randomString = stringGenerator.next().value;
 				randomString.length.should.be.within(5, 10);
 
 				randomString.split('').forEach(function (char) {
@@ -39,9 +41,10 @@ describe('Core generators', function () {
 
 		it('should have a default length', function () {
 			let options = { letters: 'ABCDEFG' };
+			let stringGenerator = generators.string(options);
 
 			repeat(20, function () {
-				let randomString = generators.string(options);
+				let randomString = stringGenerator.next().value;
 				randomString.length.should.be.within(10, 20);
 			});
 		});
@@ -49,24 +52,27 @@ describe('Core generators', function () {
 
 	describe('number', function () {
 		it('should return a number', function () {
+			let numberGenerator = generators.number({}, '5-10');
 			repeat(20, function () {
-				let randomNumber = generators.number({}, '5-10');
+				let randomNumber = numberGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(5, 10);
 			});
 		});
 
 		it('should support decimals', function () {
+			let numberGenerator = generators.number({}, '0.1-0.9');
 			repeat(20, function () {
-				let randomNumber = generators.number({}, '0.1-0.9');
+				let randomNumber = numberGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(0.1, 0.9);
 			});
 		});
 
 		it('should support negative numbers', function () {
+			let numberGenerator = generators.number({}, '-20--10');
 			repeat(20, function () {
-				let randomNumber = generators.number({}, '-20--10');
+				let randomNumber = numberGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(-20, -10);
 			});
@@ -74,8 +80,9 @@ describe('Core generators', function () {
 
 		// This _can_ fail, but is statistically unlikely to
 		it('should return a number of a given < 1 precision', function () {
+			let numberGenerator = generators.number({}, '5-10', '0.0001');
 			repeat(10, function () {
-				let randomNumber = generators.number({}, '5-10', '0.0001');
+				let randomNumber = numberGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(5, 10);
 
@@ -85,13 +92,15 @@ describe('Core generators', function () {
 		});
 
 		it('should return a number of a given > 1 precision', function () {
-			let randomNumber = generators.number({}, '10225-10245', '100');
+			let numberGenerator = generators.number({}, '10225-10245', '100');
+			let randomNumber = numberGenerator.next().value;
 			randomNumber.should.equal(10200);
 		});
 
 		it('should have a default range', function () {
+			let numberGenerator = generators.number({});
 			repeat(20, function () {
-				let randomNumber = generators.number({});
+				let randomNumber = numberGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(0, 1);
 			});
@@ -100,24 +109,27 @@ describe('Core generators', function () {
 
 	describe('int', function () {
 		it('should return an integer', function () {
+			let intGenerator = generators.int({}, '7-10');
 			repeat(20, function () {
-				let randomNumber = generators.int({}, '7-10');
+				let randomNumber = intGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.oneOf([7, 8, 9, 10]);
 			});
 		});
 
 		it('should support negative numbers', function () {
-			repeat(20, function () {
-				let randomNumber = generators.int({}, '-10--7');
+			let intGenerator = generators.int({}, '-10--7');
+					repeat(20, function () {
+				let randomNumber = intGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.oneOf([-10, -9, -8, -7]);
 			});
 		});
 
 		it('should have a default range', function () {
-			repeat(20, function () {
-				let randomNumber = generators.int({});
+			let intGenerator = generators.int({});
+					repeat(20, function () {
+				let randomNumber = intGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(0, 10);
 			});
@@ -126,8 +138,9 @@ describe('Core generators', function () {
 
 	describe('char', function () {
 		it('should return a char', function () {
+			let charGenerator = generators.char({}, 'F-I');
 			repeat(20, function () {
-				let randomChar = generators.char({}, 'F-I');
+				let randomChar = charGenerator.next().value;
 				randomChar.should.be.a.String();
 				randomChar.length.should.equal(1);
 				randomChar.should.be.oneOf(['F', 'G', 'H', 'I']);
@@ -135,8 +148,9 @@ describe('Core generators', function () {
 		});
 
 		it('should have a default range', function () {
+			let charGenerator = generators.char({});
 			repeat(20, function () {
-				let randomChar = generators.char({});
+				let randomChar = charGenerator.next().value;
 				randomChar.should.be.a.String();
 				randomChar.length.should.equal(1);
 				randomChar.should.match(/[A-Z]/);
@@ -146,21 +160,23 @@ describe('Core generators', function () {
 
 	describe('boolean', function () {
 		it('should return a boolean value', function () {
+			let booleanGenerator = generators.boolean({});
 			repeat(20, function () {
-				let randomBoolean = generators.boolean({});
+				let randomBoolean = booleanGenerator.next().value;
 				randomBoolean.should.be.type('boolean');
 			});
 		});
 
 		it('should return a biased boolean value', function () {
-			generators.boolean({}, 1).should.be.True();
+			generators.boolean({}, 1).next().value.should.be.True();
 		});
 	});
 
 	describe('array', function () {
 		it('should pick a random generator', function () {
+			let arrayGenerator = generators.array({}, 'int:4-4', 'int:7-7');
 			repeat(20, function () {
-				let randomGenerator = generators.array({}, 'int:4-4', 'int:7-7');
+				let randomGenerator = arrayGenerator.next().value;
 				randomGenerator.should.be.oneOf([4, 7]);
 			});
 		});
@@ -169,13 +185,13 @@ describe('Core generators', function () {
 	describe('repeat', function () {
 		it('should repeat a generator n times', function () {
 			let nStrings = generators.repeat({}, 3, 'int:3-3');
-			nStrings.should.equal('333');
+			nStrings.next().value.should.equal('333');
 		});
 	});
 
 	describe('literal', function () {
 		it('should return literal string values', function () {
-			let string = generators.literal({}, '"test"');
+			let string = generators.literal({}, '"test"').next().value;
 			string.should.equal('test');
 		});
 
@@ -186,7 +202,7 @@ describe('Core generators', function () {
 			};
 
 			let generatedObject = generators.literal({}, JSON.stringify(object));
-			generatedObject.should.deepEqual(object);
+			generatedObject.next().value.should.deepEqual(object);
 		});
 	});
 });

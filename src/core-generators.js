@@ -1,54 +1,88 @@
+import regeneratorRuntime from 'regenerator/runtime-module';
+
 import Range from './range';
 import Generator from './generator';
 import { getRandomElementOf, isNumeric } from './util';
 
-export function string(options, range = '10-20') {
-	let length = new Range(range).getRandomInt();
-	let str = '';
+export function* string(options, range = '10-20') {
+	range = new Range(range);
 
-	for (let i = 0; i < length; i++) {
-		str += getRandomElementOf(options.letters);
+	while (true) {
+		let length = range.getRandomInt();
+		let str = '';
+
+		for (let i = 0; i < length; i++) {
+			str += getRandomElementOf(options.letters);
+		}
+
+		yield str;
 	}
-
-	return str;
 }
 
-export function number(options, range = '0-1', precision) {
-	let random = new Range(range).getRandom();
+export function* number(options, range = '0-1', precision) {
+	range = new Range(range);
 
 	if (!isNumeric(precision)) {
-		return random;
+		while (true) {
+			yield range.getRandom();
+		}
+	} else {
+		while (true) {
+			let random = range.getRandom();
+
+			if (precision < 1) {
+				yield Number(random.toFixed(-Math.log10(precision)));
+			} else {
+				yield Math.round(random / precision) * precision;
+			}
+		}
 	}
+}
 
-	if (precision < 1) {
-		return Number(random.toFixed(-Math.log10(precision)));
+export function* int(options, range = '0-10') {
+	range = new Range(range);
+
+	while (true) {
+		yield range.getRandomInt();
 	}
-
-	return Math.round(random / precision) * precision;
 }
 
-export function int(options, range = '0-10') {
-	return new Range(range).getRandomInt();
+export function* char(options, range = 'A-Z') {
+	range = new Range(range);
+
+	while (true) {
+		yield range.getRandom();
+	}
 }
 
-export function char(options, range = 'A-Z') {
-	return new Range(range).getRandom();
+export function* boolean(options, bias = 0.5) {
+	while (true) {
+		yield Math.random() < bias;
+	}
 }
 
-export function boolean(options, bias = 0.5) {
-	return Math.random() < bias;
+export function* array(options, ...generators) {
+	generators = generators.map((str) => new Generator(str));
+
+	while (true) {
+		let generator = getRandomElementOf(generators);
+		yield generator.resolve();
+	}
 }
 
-export function array(options, ...generators) {
-	let generatorString = getRandomElementOf(generators);
-	return new Generator(generatorString).resolve();
+export function* repeat(options, n, generatorString) {
+	let generator = new Generator(generatorString);
+
+	while (true) {
+		let value = generator.resolve();
+		yield new Array(n + 1).join(value);
+	}
 }
 
-export function repeat(options, n, generatorString) {
-	let value = new Generator(generatorString).resolve();
-	return new Array(n + 1).join(value);
-}
+export function* literal(options, json) {
+	let returnValue = JSON.parse(json);
 
-export function literal(options, json) {
-	return JSON.parse(json);
+	while (true) {
+		yield returnValue;
+	}
 }

@@ -43,7 +43,13 @@ export default function Generator(generatorString, opts) {
 	this._type = type;
 	this._args = args;
 
+	if (!generators[type]) {
+		throw new Error(`Generator "${type}" not found`);
+	}
+
+	let generator = generators[type](opts, ...args);
+
 	this.resolve = function () {
-		return generators[type](opts, ...args);
+		return generator.next().value;
 	};
 }
