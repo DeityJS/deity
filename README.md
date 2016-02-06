@@ -97,6 +97,5 @@ Todo
 
 ## Todo
 
-- Async + promises
 - Compiled code in /dist
 - Docs

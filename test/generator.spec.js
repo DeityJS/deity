@@ -1,4 +1,4 @@
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator/runtime-module'; // eslint-disable-line
 
 import deity from '../src/index';
 import Generator from '../src/generator';
@@ -37,7 +37,7 @@ describe('Generator function', function () {
 
 		it('should have a useful error when generator not found', function () {
 			(function () {
-				new Generator('foobar');
+				new Generator('foobar'); // eslint-disable-line no-new
 			}).should.throw(/Generator "foobar" not found/);
 		});
 	});

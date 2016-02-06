@@ -31,7 +31,7 @@ export function getRandomElementOf(list) {
 export function getYieldValue(resolved, fn) {
 	if (typeof resolved.then === 'function') {
 		return resolved.then(fn);
-	} else {
-		return fn(resolved);
 	}
+
+	return fn(resolved);
 }

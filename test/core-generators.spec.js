@@ -1,4 +1,4 @@
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator/runtime-module'; // eslint-disable-line
 import deity from '../src/index';
 import Range from '../src/range';
 import * as generators from '../src/core-generators';
@@ -25,7 +25,7 @@ describe('Core generators', function () {
 			};
 
 			let lettersArray = options.letters.split('');
-			let stringGenerator = generators.string(options, '5-10')
+			let stringGenerator = generators.string(options, '5-10');
 
 			repeat(20, function () {
 				let randomString = stringGenerator.next().value;
@@ -160,7 +160,7 @@ describe('Core generators', function () {
 
 		it('should support negative numbers', function () {
 			let intGenerator = generators.int({}, '-10--7');
-					repeat(20, function () {
+			repeat(20, function () {
 				let randomNumber = intGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.oneOf([-10, -9, -8, -7]);
@@ -169,7 +169,7 @@ describe('Core generators', function () {
 
 		it('should have a default range', function () {
 			let intGenerator = generators.int({});
-					repeat(20, function () {
+			repeat(20, function () {
 				let randomNumber = intGenerator.next().value;
 				randomNumber.should.be.a.Number();
 				randomNumber.should.be.within(0, 10);

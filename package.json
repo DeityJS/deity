@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "eslint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.4.3",
+    "eslint": "^1.10.3",
     "mocha": "^2.4.5",
     "regenerator": "^0.8.42",
     "should": "^8.2.1"

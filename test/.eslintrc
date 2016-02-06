@@ -1,0 +1,9 @@
+{
+  "extends": "..//.eslintrc",
+
+  "rules": {
+    "new-cap": 0,
+    "no-loop-func": 0,
+    "max-nested-callbacks": [1, 5],
+  }
+}

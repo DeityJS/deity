@@ -1,3 +1,5 @@
+'use strict';
+
 import Range from './range';
 import Generator from './generator';
 import * as generators from './core-generators';

@@ -1,4 +1,4 @@
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator/runtime-module'; // eslint-disable-line
 
 import Range from './range';
 import Generator from './generator';
@@ -20,10 +20,11 @@ export function* string(options, range = '10-20') {
 		}
 	} else {
 		let generator = new Generator(range);
+		let toString = (val) => val.toString();
 
 		while (true) {
 			let resolved = generator.resolve();
-			yield getYieldValue(resolved, (val) => val.toString());
+			yield getYieldValue(resolved, toString);
 		}
 	}
 }
@@ -70,8 +71,8 @@ export function* boolean(options, bias = 0.5) {
 	}
 }
 
-export function* oneOf(options, ...generators) {
-	generators = generators.map((str) => new Generator(str));
+export function* oneOf(options, ...generatorStrings) {
+	let generators = generatorStrings.map((str) => new Generator(str));
 
 	while (true) {
 		let generator = getRandomElementOf(generators);
@@ -79,11 +80,12 @@ export function* oneOf(options, ...generators) {
 	}
 }
 
-export function* array(options, ...generators) {
-	generators = generators.map((str) => new Generator(str));
+export function* array(options, ...generatorsStrings) {
+	let generators = generatorsStrings.map((str) => new Generator(str));
+	let resolveGenerator = (generator) => generator.resolve();
 
 	while (true) {
-		let all = generators.map((generator) => generator.resolve());
+		let all = generators.map(resolveGenerator);
 
 		// Promise.all will resolve immediately if none of the values are promises
 		yield Promise.all(all);
@@ -92,10 +94,11 @@ export function* array(options, ...generators) {
 
 export function* repeat(options, n, generatorString) {
 	let generator = new Generator(generatorString);
+	let repeatString = (val) => new Array(n + 1).join(val);
 
 	while (true) {
 		let resolved = generator.resolve();
-		yield getYieldValue(resolved, (val) => new Array(n + 1).join(val));
+		yield getYieldValue(resolved, repeatString);
 	}
 }
 

@@ -15,7 +15,7 @@ export default function Generator(generatorString, opts) {
 
 	// Deal with A-Z
 	if ((match = /^[a-z]-[a-z]$/i.exec(generatorString))) {
-		return new Generator(`char:${match[0]}`)
+		return new Generator(`char:${match[0]}`);
 	}
 
 	// Deal with "strings"
@@ -52,14 +52,14 @@ export default function Generator(generatorString, opts) {
 	this.resolve = function (cb) {
 		let value = generator.next().value;
 
-		if (typeof cb === 'function') {
-			if (typeof value.then === 'function') {
-				value.then(cb);
-			} else {
-				cb(value)
-			}
-		} else {
+		if (typeof cb !== 'function') {
 			return value;
+		}
+
+		if (typeof value.then === 'function') {
+			value.then(cb);
+		} else {
+			cb(value);
 		}
 	};
 }

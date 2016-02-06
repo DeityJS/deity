@@ -1,4 +1,4 @@
-import regeneratorRuntime from 'regenerator/runtime-module';
+import regeneratorRuntime from 'regenerator/runtime-module'; // eslint-disable-line
 import deity from '../src/index';
 
 describe('Deity', function () {
