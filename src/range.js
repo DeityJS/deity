@@ -1,18 +1,18 @@
 import { isNumeric } from './util';
 
 export default function Range(input) {
-	input = input.split('-');
+	input = /(-?[^-]+)-(-?[^-]+)/.exec(input);
 
-	if (isNumeric(input[0]) && isNumeric(input[1])) {
+	if (isNumeric(input[1]) && isNumeric(input[2])) {
 		this.type = 'number';
 
-		this.min = Number(input[0]);
-		this.max = Number(input[1]);
+		this.min = Number(input[1]);
+		this.max = Number(input[2]);
 	} else {
 		this.type = 'char';
 
-		this.min = input[0];
-		this.max = input[1];
+		this.min = input[1];
+		this.max = input[2];
 
 		this._minCharCode = this.min.charCodeAt(0);
 		this._maxCharCode = this.max.charCodeAt(0);

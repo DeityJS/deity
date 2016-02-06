@@ -46,6 +46,18 @@ describe('Generator function', function () {
 			generator._args.should.deepEqual(['10-2000']);
 		});
 
+		it('should handle number ranges with decimals', function () {
+			let generator = new Generator('0.1-0.9');
+			generator._type.should.equal('number');
+			generator._args.should.deepEqual(['0.1-0.9']);
+		});
+
+		it('should handle number ranges with negatives', function () {
+			let generator = new Generator('-50--30');
+			generator._type.should.equal('number');
+			generator._args.should.deepEqual(['-50--30']);
+		});
+
 		it('should handle character ranges', function () {
 			let generator = new Generator('F-M');
 			generator._type.should.equal('char');

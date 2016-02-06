@@ -10,6 +10,14 @@ describe('Range function', function () {
 			numberRange.max.should.equal(10);
 		});
 
+		it('should work with negative numbers', function () {
+			let negativeRange = new Range('-20--10');
+			negativeRange.should.be.instanceof(Range);
+			negativeRange.type.should.equal('number');
+			negativeRange.min.should.equal(-20);
+			negativeRange.max.should.equal(-10);
+		});
+
 		it('should work with characters', function () {
 			let charRange = new Range('F-X');
 			charRange.should.be.instanceof(Range);

@@ -13,6 +13,11 @@ describe('Utility functions', function () {
 			util.isNumeric('1459.24').should.be.True();
 		});
 
+		it('should return true for negative numbers', function () {
+			util.isNumeric('-10').should.be.True();
+			util.isNumeric('-10.5').should.be.True();
+		});
+
 		it('should return false for non-number-like strings', function () {
 			util.isNumeric('horse').should.be.False();
 			util.isNumeric('14 cars').should.be.False();

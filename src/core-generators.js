@@ -2,7 +2,7 @@ import Range from './range';
 import Generator from './generator';
 import { getRandomElementOf, isNumeric } from './util';
 
-export function string(options, range) {
+export function string(options, range = '10-20') {
 	let length = new Range(range).getRandomInt();
 	let str = '';
 
@@ -13,7 +13,7 @@ export function string(options, range) {
 	return str;
 }
 
-export function number(options, range, precision) {
+export function number(options, range = '0-1', precision) {
 	let random = new Range(range).getRandom();
 
 	if (!isNumeric(precision)) {
@@ -27,11 +27,11 @@ export function number(options, range, precision) {
 	return Math.round(random / precision) * precision;
 }
 
-export function int(options, range) {
+export function int(options, range = '0-10') {
 	return new Range(range).getRandomInt();
 }
 
-export function char(options, range) {
+export function char(options, range = 'A-Z') {
 	return new Range(range).getRandom();
 }
 

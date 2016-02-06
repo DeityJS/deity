@@ -37,7 +37,14 @@ describe('Core generators', function () {
 			});
 		});
 
-		it('should have a default length');
+		it('should have a default length', function () {
+			let options = { letters: 'ABCDEFG' };
+
+			repeat(20, function () {
+				let randomString = generators.string(options);
+				randomString.length.should.be.within(10, 20);
+			});
+		});
 	});
 
 	describe('number', function () {
@@ -49,8 +56,21 @@ describe('Core generators', function () {
 			});
 		});
 
-		it('should support decimals');
-		it('should support negative numbers');
+		it('should support decimals', function () {
+			repeat(20, function () {
+				let randomNumber = generators.number({}, '0.1-0.9');
+				randomNumber.should.be.a.Number();
+				randomNumber.should.be.within(0.1, 0.9);
+			});
+		});
+
+		it('should support negative numbers', function () {
+			repeat(20, function () {
+				let randomNumber = generators.number({}, '-20--10');
+				randomNumber.should.be.a.Number();
+				randomNumber.should.be.within(-20, -10);
+			});
+		});
 
 		// This _can_ fail, but is statistically unlikely to
 		it('should return a number of a given < 1 precision', function () {
@@ -69,7 +89,13 @@ describe('Core generators', function () {
 			randomNumber.should.equal(10200);
 		});
 
-		it('should have a default range');
+		it('should have a default range', function () {
+			repeat(20, function () {
+				let randomNumber = generators.number({});
+				randomNumber.should.be.a.Number();
+				randomNumber.should.be.within(0, 1);
+			});
+		});
 	});
 
 	describe('int', function () {
@@ -81,8 +107,21 @@ describe('Core generators', function () {
 			});
 		});
 
-		it('should support negative numbers');
-		it('should have a default range');
+		it('should support negative numbers', function () {
+			repeat(20, function () {
+				let randomNumber = generators.int({}, '-10--7');
+				randomNumber.should.be.a.Number();
+				randomNumber.should.be.oneOf([-10, -9, -8, -7]);
+			});
+		});
+
+		it('should have a default range', function () {
+			repeat(20, function () {
+				let randomNumber = generators.int({});
+				randomNumber.should.be.a.Number();
+				randomNumber.should.be.within(0, 10);
+			});
+		});
 	});
 
 	describe('char', function () {
@@ -95,7 +134,14 @@ describe('Core generators', function () {
 			});
 		});
 
-		it('should have a default range');
+		it('should have a default range', function () {
+			repeat(20, function () {
+				let randomChar = generators.char({});
+				randomChar.should.be.a.String();
+				randomChar.length.should.equal(1);
+				randomChar.should.match(/[A-Z]/);
+			});
+		});
 	});
 
 	describe('boolean', function () {

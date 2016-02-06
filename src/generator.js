@@ -9,7 +9,7 @@ export default function Generator(generatorString, opts) {
 	}
 
 	// Deal with 1-10
-	if ((match = /^\d+-\d+$/.exec(generatorString))) {
+	if ((match = /^-?[\d.]+--?[\d.]+$/.exec(generatorString))) {
 		return new Generator(`number:${match[0]}`);
 	}
 
