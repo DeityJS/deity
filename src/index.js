@@ -2,13 +2,15 @@ import Range from './range';
 import Generator from './generator';
 import * as generators from './core-generators';
 
+import objectAssign from 'object-assign';
+
 export default function deity(generatorString, opts, fn) {
 	if (typeof opts === 'function') {
 		fn = opts;
 		opts = {};
 	}
 
-	opts = Object.assign({}, deity.defaultOptions, opts);
+	opts = objectAssign({}, deity.defaultOptions, opts);
 
 	let generator = new Generator(generatorString, opts);
 
@@ -24,7 +26,3 @@ deity.defaultOptions = {
 	//letters: '1234567890ABCdefghjKLMNOpQRs',
 	letters: new Range('A-Z')
 };
-
-
-
-

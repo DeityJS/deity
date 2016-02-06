@@ -11,7 +11,7 @@ export function getRandomElementOf(list) {
 		return list.getRandom();
 	}
 
-	if (Array.isArray(list)) {
+	if (list.length) {
 		return list[Math.floor(Math.random() * list.length)];
 	}
 

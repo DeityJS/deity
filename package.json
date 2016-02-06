@@ -25,5 +25,8 @@
     "mocha": "^2.4.5",
     "regenerator": "^0.8.42",
     "should": "^8.2.1"
+  },
+  "dependencies": {
+    "object-assign": "^4.0.1"
   }
 }
