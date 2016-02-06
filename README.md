@@ -98,5 +98,6 @@ Todo
 ## Todo
 
 - Plugins
-- Travis
 - Async + promises
+- Compiled code in /dist
+- Docs
