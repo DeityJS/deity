@@ -2,13 +2,15 @@
   "name": "deity",
   "version": "0.1.0",
   "description": "Deity is a property generator for use when writing tests.",
-  "main": "src/index.js",
+  "main": "dist/deity.min.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "mocha",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "build": "rollup -c",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -23,9 +25,11 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.4.3",
-    "eslint": "^1.10.3",
+    "eslint": "^0.24.1",
     "mocha": "^2.4.5",
     "regenerator": "^0.8.42",
+    "rollup": "^0.25.2",
+    "rollup-plugin-uglify": "^0.2.0",
     "should": "^8.2.1"
   },
   "dependencies": {

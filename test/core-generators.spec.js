@@ -1,7 +1,7 @@
 import regeneratorRuntime from 'regenerator/runtime-module'; // eslint-disable-line
 import deity from '../src/index';
 import Range from '../src/range';
-import * as generators from '../src/core-generators';
+import generators from '../src/core-generators';
 
 describe('Core generators', function () {
 	before(function () {

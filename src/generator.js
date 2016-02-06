@@ -1,4 +1,4 @@
-import * as generators from './core-generators';
+import generators from './core-generators';
 
 export default function Generator(generatorString, opts) {
 	let match;

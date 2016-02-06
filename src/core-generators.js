@@ -4,7 +4,10 @@ import Range from './range';
 import Generator from './generator';
 import { getRandomElementOf, isNumeric, getYieldValue } from './util';
 
-export function* string(options, range = '10-20') {
+const generators = {};
+export default generators;
+
+generators.string = function*(options, range = '10-20') {
 	if (/^\d+-\d+$/.test(range)) {
 		range = new Range(range);
 
@@ -27,9 +30,9 @@ export function* string(options, range = '10-20') {
 			yield getYieldValue(resolved, toString);
 		}
 	}
-}
+};
 
-export function* number(options, range = '0-1', precision) {
+generators.number = function*(options, range = '0-1', precision) {
 	range = new Range(range);
 
 	if (!isNumeric(precision)) {
@@ -47,40 +50,40 @@ export function* number(options, range = '0-1', precision) {
 			}
 		}
 	}
-}
+};
 
-export function* int(options, range = '0-10') {
+generators.int = function*(options, range = '0-10') {
 	range = new Range(range);
 
 	while (true) {
 		yield range.getRandomInt();
 	}
-}
+};
 
-export function* char(options, range = 'A-Z') {
+generators.char = function*(options, range = 'A-Z') {
 	range = new Range(range);
 
 	while (true) {
 		yield range.getRandom();
 	}
-}
+};
 
-export function* boolean(options, bias = 0.5) {
+generators.boolean = function*(options, bias = 0.5) {
 	while (true) {
 		yield Math.random() < bias;
 	}
-}
+};
 
-export function* oneOf(options, ...generatorStrings) {
+generators.oneOf = function*(options, ...generatorStrings) {
 	let generators = generatorStrings.map((str) => new Generator(str));
 
 	while (true) {
 		let generator = getRandomElementOf(generators);
 		yield generator.resolve();
 	}
-}
+};
 
-export function* array(options, ...generatorsStrings) {
+generators.array = function*(options, ...generatorsStrings) {
 	let generators = generatorsStrings.map((str) => new Generator(str));
 	let resolveGenerator = (generator) => generator.resolve();
 
@@ -90,9 +93,9 @@ export function* array(options, ...generatorsStrings) {
 		// Promise.all will resolve immediately if none of the values are promises
 		yield Promise.all(all);
 	}
-}
+};
 
-export function* repeat(options, n, generatorString) {
+generators.repeat = function*(options, n, generatorString) {
 	let generator = new Generator(generatorString);
 	let repeatString = (val) => new Array(n + 1).join(val);
 
@@ -100,17 +103,17 @@ export function* repeat(options, n, generatorString) {
 		let resolved = generator.resolve();
 		yield getYieldValue(resolved, repeatString);
 	}
-}
+};
 
-export function* literal(options, json) {
+generators.literal = function*(options, json) {
 	let returnValue = JSON.parse(json);
 
 	while (true) {
 		yield returnValue;
 	}
-}
+};
 
-export function* entry(options, prop = 'collection') {
+generators.entry = function*(options, prop = 'collection') {
 	let collection = options[prop];
 
 	if (!collection) {
@@ -120,4 +123,4 @@ export function* entry(options, prop = 'collection') {
 	while (true) {
 		yield getRandomElementOf(collection);
 	}
-}
+};

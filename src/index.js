@@ -2,7 +2,7 @@
 
 import Range from './range';
 import Generator from './generator';
-import * as generators from './core-generators';
+import generators from './core-generators';
 
 import objectAssign from 'object-assign';
 
