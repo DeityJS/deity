@@ -18,6 +18,11 @@ export default function Generator(generatorString, opts) {
 		return new Generator(`char:${match[0]}`)
 	}
 
+	// Deal with "strings"
+	if ((match = /^".+"$/.exec(generatorString))) {
+		return new Generator(`literal:${match[0]}`);
+	}
+
 	let splitString = [''];
 	let inBrackets = false;
 

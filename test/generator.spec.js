@@ -63,6 +63,14 @@ describe('Generator function', function () {
 			generator._type.should.equal('char');
 			generator._args.should.deepEqual(['F-M']);
 		});
+
+		it('should handle literal strings', function () {
+			let generator = new Generator('"test"');
+			generator._type.should.equal('literal');
+			generator._args.should.deepEqual(['"test"']);
+
+			generator.resolve().should.equal('test');
+		});
 	});
 
 	describe('Resolving', function () {

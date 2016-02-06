@@ -48,3 +48,7 @@ export function repeat(options, n, generatorString) {
 	let value = new Generator(generatorString).resolve();
 	return new Array(n + 1).join(value);
 }
+
+export function literal(options, json) {
+	return JSON.parse(json);
+}

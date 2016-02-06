@@ -172,6 +172,23 @@ describe('Core generators', function () {
 			nStrings.should.equal('333');
 		});
 	});
+
+	describe('literal', function () {
+		it('should return literal string values', function () {
+			let string = generators.literal({}, '"test"');
+			string.should.equal('test');
+		});
+
+		it('should work with more complex values', function () {
+			let object = {
+				foo: 'bar',
+				ary: [1, 2, 3]
+			};
+
+			let generatedObject = generators.literal({}, JSON.stringify(object));
+			generatedObject.should.deepEqual(object);
+		});
+	});
 });
 
 // @todo: Add an option to allow a small percentage of failures
