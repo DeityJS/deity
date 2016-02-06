@@ -1,5 +1,6 @@
 import Range from './range';
-import { getRandomElementOf } from './util';
+import Generator from './generator';
+import { getRandomElementOf, isNumeric } from './util';
 
 export function string(options, range) {
 	let length = new Range(range).getRandomInt();
@@ -15,12 +16,12 @@ export function string(options, range) {
 export function number(options, range, precision) {
 	let random = new Range(range).getRandom();
 
-	if (typeof precision !== 'number') {
+	if (!isNumeric(precision)) {
 		return random;
 	}
 
 	if (precision < 1) {
-		return random.toFixed(-Math.log10(precision));
+		return Number(random.toFixed(-Math.log10(precision)));
 	}
 
 	return Math.round(random / precision) * precision;
@@ -43,7 +44,7 @@ export function array(options, ...generators) {
 	return new Generator(generatorString).resolve();
 }
 
-export function repeat(n, generatorString) {
+export function repeat(options, n, generatorString) {
 	let value = new Generator(generatorString).resolve();
 	return new Array(n + 1).join(value);
 }

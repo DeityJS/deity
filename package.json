@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha --compilers js:babel-register --require should"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
