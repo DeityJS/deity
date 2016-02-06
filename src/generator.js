@@ -61,14 +61,14 @@ export default function Generator(generatorString, opts) {
 	this.resolve = function (cb) {
 		let value = generator.next().value;
 
-		if (typeof cb !== 'function') {
-			return value;
+		if (typeof cb === 'function') {
+			if (typeof value.then === 'function') {
+				value.then(cb);
+			} else {
+				cb(value);
+			}
 		}
 
-		if (typeof value.then === 'function') {
-			value.then(cb);
-		} else {
-			cb(value);
-		}
+		return value;
 	};
 }

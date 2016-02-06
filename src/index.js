@@ -13,6 +13,7 @@ import objectAssign from 'object-assign';
  * @param {string} generatorString String to create a generator from.
  * @param {object} [opts] Optional options, such as number of iterations.
  * @param {function} fn The function to call.
+ * @returns {Promise} A promise that resolves when all callbacks are called.
  */
 export default function deity(generatorString, opts, fn) {
 	if (typeof opts === 'function') {
@@ -23,10 +24,24 @@ export default function deity(generatorString, opts, fn) {
 	opts = objectAssign({}, deity.defaultOptions, opts);
 
 	let generator = new Generator(generatorString, opts);
+	let promiseArray = [];
+
+	let promiseFn = function (resolve, reject) {
+		generator.resolve(function (val) {
+			try {
+				fn(val);
+				resolve(val);
+			} catch (e) {
+				reject(e);
+			}
+		});
+	};
 
 	for (let i = 0; i < opts.iterations; i++) {
-		generator.resolve(fn);
+		promiseArray.push(new Promise(promiseFn));
 	}
+
+	return Promise.all(promiseArray);
 }
 
 /**

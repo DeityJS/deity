@@ -36,22 +36,44 @@ describe('Deity', function () {
 		});
 	});
 
-	it('should support async generators', function (done) {
-		let iterations = 50;
+	// This will fail if the promise stuff fails, but that's tested
+	it('should support async generators', function () {
 		let time = Date.now();
 
-		deity('async:callum', { iterations }, function (val) {
-			try {
-				val.should.equal('callum');
-				(Date.now() - time).should.be.within(20, 60);
-			} catch (e) {
-				// Not sure why I need to catch this myself?
-				done(e);
-			}
+		return deity('async:callum', { iterations: 50 }, function (val) {
+			val.should.equal('callum');
+			(Date.now() - time).should.be.within(20, 60);
+		});
+	});
 
-			if (--iterations === 0) {
+	it('should return a promise that resolves when everything is done', function (done) {
+		let promise = deity('async', { iterations: 3 }, function () {});
+		promise.should.be.instanceof(Promise);
+
+		let time = Date.now();
+
+		promise.then(function () {
+			let difference = Date.now() - time;
+			if (difference < 20 || difference > 30) {
+				done(new Error('Different was too great'));
+			} else {
 				done();
 			}
+		});
+	});
+
+	it('should throw errors from async generators', function (done) {
+		let promise = deity('async', { iterations: 2 }, function () {
+			throw new Error('testing testing');
+		});
+
+		promise.then(function () {
+			done(new Error('Expected error to be throw but promise succeeded :/'));
+		});
+
+		promise.catch(function (e) {
+			e.message.should.equal('testing testing');
+			done();
 		});
 	});
 
