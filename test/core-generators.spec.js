@@ -271,7 +271,9 @@ describe('Core generators', function () {
 	describe('repeat', function () {
 		it('should repeat a generator n times', function () {
 			let nStrings = generators.repeat({}, 3, 'int:3-3');
-			nStrings.next().value.should.equal('333');
+			return nStrings.next().value.then(function (val) {
+				val.should.equal('333');
+			});
 		});
 
 		it('should work with async generators', function (done) {
@@ -291,6 +293,14 @@ describe('Core generators', function () {
 						done();
 					}
 				});
+			});
+		});
+
+		it('should not return the same thing each time', function () {
+			let generator = generators.repeat({}, 10, 'int:0-9');
+			return generator.next().value.then(function (value) {
+				// The chances of this happening randomly are 1 in 10^9
+				value.split(value[0]).length.should.not.equal(11);
 			});
 		});
 	});
