@@ -62,6 +62,43 @@ describe('Deity', function () {
 		});
 	});
 
+	it('should allow you to return promises from generators', function () {
+		let wins = 0;
+
+		let promise = deity('number:1-5', { iterations: 5 }, function () {
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					wins++;
+					resolve();
+				}, 10);
+			});
+		});
+
+		return promise.then(function () {
+			wins.should.equal(5);
+		});
+	});
+
+	it('should allow you to return failing promises from generators', function (done) {
+		let losses = 0;
+
+		let promise = deity('number:1-5', { iterations: 5 }, function () {
+			return new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					losses++;
+					reject();
+				}, 10);
+			});
+		});
+
+		promise.then(function () {
+			done(new Error('Should have failed'));
+		}, function () {
+			losses.should.equal(5);
+			done();
+		});
+	});
+
 	it('should throw errors from async generators', function (done) {
 		let promise = deity('async', { iterations: 2 }, function () {
 			throw new Error('testing testing');

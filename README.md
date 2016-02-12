@@ -97,5 +97,4 @@ Todo
 
 ## Todo
 
-- Compiled code in /dist
 - Docs

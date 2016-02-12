@@ -29,8 +29,8 @@ export default function deity(generatorString, opts, fn) {
 	let promiseFn = function (resolve, reject) {
 		generator.resolve(function (val) {
 			try {
-				fn(val);
-				resolve(val);
+				let fnResult = fn(val);
+				Promise.resolve(fnResult).then(resolve, reject);
 			} catch (e) {
 				reject(e);
 			}
