@@ -149,12 +149,14 @@ generators.array = function*(options, ...generatorsStrings) {
 generators.repeat = function*(options, n, generatorString) {
 	let generator = new Generator(generatorString);
 
-	let resolveGenerator = () => generator.resolve();
 	let joinValues = (values) => values.join('');
 
 	while (true) {
-		// We call .fill() because .map() ignores holes
-		let ary = new Array(n).fill('').map(resolveGenerator);
+		let ary = [];
+		for (let i = 0; i < n; i++) {
+			ary.push(generator.resolve());
+		}
+
 		yield Promise.all(ary).then(joinValues);
 	}
 };
