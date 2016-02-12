@@ -54,7 +54,7 @@ describe('Deity', function () {
 
 		promise.then(function () {
 			let difference = Date.now() - time;
-			if (difference < 20 || difference > 30) {
+			if (difference < 20 || difference > 40) {
 				done(new Error('Different was too great'));
 			} else {
 				done();
