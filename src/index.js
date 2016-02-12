@@ -30,7 +30,12 @@ export default function deity(generatorString, opts, fn) {
 		generator.resolve(function (val) {
 			try {
 				let fnResult = fn(val);
-				Promise.resolve(fnResult).then(resolve, reject);
+
+				if (fnResult && typeof fnResult.then === 'function') {
+					fnResult.then(resolve, reject);
+				} else {
+					resolve(fnResult);
+				}
 			} catch (e) {
 				reject(e);
 			}
