@@ -251,7 +251,7 @@ Released under the MIT license
 
 
 
-[Introducing Deity]: todo
-[Deity website]: todo
+[Introducing Deity]
+[Deity website]
 [randomuser.me]: http://randomuser.me/
 [Creating a Deity plugin]
