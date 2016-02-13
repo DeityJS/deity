@@ -62,6 +62,16 @@ describe('Deity', function () {
 		});
 	});
 
+	it('should throw errors', function (done) {
+		deity('number', { iterations: 1 }, function () {
+			throw new Error('test error');
+		})
+		.catch(function (e) {
+			e.message.should.match(/test error/);
+			done();
+		});
+	});
+
 	it('should allow you to return promises from generators', function () {
 		let wins = 0;
 
