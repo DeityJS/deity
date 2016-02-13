@@ -43,7 +43,7 @@ time to call the callback.
 
 The final argument should be the callback to be called with the generated data.
 
-The deity function returns a promise which is resolved or rejected depending
+The Deity function returns a promise which is resolved or rejected depending
 on whether any errors are thrown in the callback function.
 
 ## Types of generators
