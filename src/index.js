@@ -15,12 +15,12 @@ import objectAssign from 'object-assign';
  * @param {function} fn The function to call.
  * @returns {Promise} A promise that resolves when all callbacks are called.
  */
-export default function deity() {
+export default function deity(...args) {
 	let generatorStrings = [];
 	let opts = objectAssign({}, deity.defaultOptions);
 	let fn, promiseFn;
 
-	Array.from(arguments).forEach(function (arg) {
+	args.forEach(function (arg) {
 		if (typeof arg === 'string') {
 			generatorStrings.push(arg);
 		} else if (typeof arg === 'object') {

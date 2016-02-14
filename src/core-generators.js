@@ -55,11 +55,12 @@ generators.number = function*(options, range = '0-1', precision) {
 			yield range.getRandom();
 		}
 	} else {
+		let decimals = -Math.round(Math.log10(precision));
 		while (true) {
 			let random = range.getRandom();
 
 			if (precision < 1) {
-				yield Number(random.toFixed(-Math.log10(precision)));
+				yield Number(random.toFixed(decimals));
 			} else {
 				yield Math.round(random / precision) * precision;
 			}
