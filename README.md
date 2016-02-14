@@ -59,6 +59,20 @@ separate argument of the function.
 The Deity function returns a promise which is resolved or rejected depending
 on whether any errors are thrown in the callback function.
 
+## Usage with mocha
+
+Calling the `deity()` function returns a promise which is either resolved or
+rejected with any errors thrown inside the callback. To use Deity with mocha,
+simply return the promise:
+
+```js
+it('should return the same value every time', function () {
+	return deity('number:0-1000', function (num) {
+		assert.equal(myFunc(num), myFunc(num));
+	});
+});
+```
+
 ## Types of generators
 
 ### string:length
