@@ -10,38 +10,70 @@ import objectAssign from 'object-assign';
  * Takes a given generator and calls a function a number of times with some
  * random strings or something.
  *
- * @param {string} generatorString String to create a generator from.
+ * @param {...string} generatorStrings Strings to create generators from.
  * @param {object} [opts] Optional options, such as number of iterations.
  * @param {function} fn The function to call.
  * @returns {Promise} A promise that resolves when all callbacks are called.
  */
-export default function deity(generatorString, opts, fn) {
-	if (typeof opts === 'function') {
-		fn = opts;
-		opts = {};
+export default function deity() {
+	let generatorStrings = [];
+	let opts = objectAssign({}, deity.defaultOptions);
+	let fn, promiseFn;
+
+	Array.from(arguments).forEach(function (arg) {
+		if (typeof arg === 'string') {
+			generatorStrings.push(arg);
+		} else if (typeof arg === 'object') {
+			objectAssign(opts, arg);
+		} else if (typeof arg === 'function') {
+			fn = arg;
+		}
+	});
+
+	let generators = generatorStrings.map(function (generatorString) {
+		return new Generator(generatorString, opts);
+	});
+
+	if (generators.length > 1) {
+		promiseFn = function (resolve, reject) {
+			let generatorPromises = generators.map(function (generator) {
+				return new Promise((resolve) => generator.resolve(resolve));
+			});
+
+			Promise.all(generatorPromises)
+				.then(function (values) {
+					try {
+						let fnResult = fn(...values);
+
+						if (fnResult && typeof fnResult.then === 'function') {
+							fnResult.then(resolve, reject);
+						} else {
+							resolve(fnResult);
+						}
+					} catch (e) {
+						reject(e);
+					}
+				});
+		};
+	} else {
+		promiseFn = function (resolve, reject) {
+			generators[0].resolve(function (val) {
+				try {
+					let fnResult = fn(val);
+
+					if (fnResult && typeof fnResult.then === 'function') {
+						fnResult.then(resolve, reject);
+					} else {
+						resolve(fnResult);
+					}
+				} catch (e) {
+					reject(e);
+				}
+			});
+		};
 	}
 
-	opts = objectAssign({}, deity.defaultOptions, opts);
-
-	let generator = new Generator(generatorString, opts);
 	let promiseArray = [];
-
-	let promiseFn = function (resolve, reject) {
-		generator.resolve(function (val) {
-			try {
-				let fnResult = fn(val);
-
-				if (fnResult && typeof fnResult.then === 'function') {
-					fnResult.then(resolve, reject);
-				} else {
-					resolve(fnResult);
-				}
-			} catch (e) {
-				reject(e);
-			}
-		});
-	};
-
 	for (let i = 0; i < opts.iterations; i++) {
 		promiseArray.push(new Promise(promiseFn));
 	}

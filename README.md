@@ -15,6 +15,16 @@ deity('string:10-20', function (str) {
 });
 ```
 
+You can give it any number of generator strings:
+
+```js
+deity('string:10-20', 'number:5-7', function (str, num) {
+	// This function will be called 100 times
+	// str will equal a string of random length between 10 and 20
+	// num will equal a random number between 5 and 7
+});
+```
+
 It also supports plugins, for example the [randomuser.me] plugin:
 
 ```js
@@ -30,18 +40,21 @@ the API documentation below.
 ## API
 
 ```
-deity( generatorString [ , options ] , callback )
+deity( ...generatorStrings [ , options ] , callback )
 ```
 
 The first argument, `generatorString`, is a string containing the name of the
 generator to use (for example, "string" or "number"), followed by some
-arguments to give to the generator, all separated by colons.
+arguments to give to the generator, all separated by colons. This argument can
+be repeated as many times as you want.
 
 The second argument is optional, and is an object where you can specify a
 number of options to override the defaults with, such as the number of
 time to call the callback.
 
 The final argument should be the callback to be called with the generated data.
+If you specify multiple generator strings, each one will be called as a
+separate argument of the function.
 
 The Deity function returns a promise which is resolved or rejected depending
 on whether any errors are thrown in the callback function.

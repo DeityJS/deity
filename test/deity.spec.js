@@ -124,6 +124,65 @@ describe('Deity', function () {
 		});
 	});
 
+	describe('multiple generators', function () {
+		it('should support multiple generators', function () {
+			let timesCalled = 0;
+
+			return deity('number:1-5', 'number:10-15', { iterations: 50 }, function (a, b) {
+				a.should.be.within(1, 5);
+				b.should.be.within(10, 15);
+				timesCalled++;
+			})
+				.then(function () {
+					timesCalled.should.equal(50);
+				});
+		});
+
+		it('should support multiple async generators', function () {
+			let timesCalled = 0;
+
+			return deity('async:test', 'async:hello', { iterations: 10 }, function (a, b) {
+				a.should.equal('test');
+				b.should.equal('hello');
+				timesCalled++;
+			})
+				.then(function () {
+					timesCalled.should.equal(10);
+				});
+		});
+
+		it('should support async + non-async generators combined', function () {
+			let timesCalled = 0;
+
+			return deity('async:test', 'number:10-15', { iterations: 10 }, function (a, b) {
+				a.should.equal('test');
+				b.should.be.within(10, 15);
+				timesCalled++;
+			})
+				.then(function () {
+					timesCalled.should.equal(10);
+				});
+		});
+
+		it('should work with looaads of generators', function () {
+			let generators = [];
+
+			for (let i = 0; i < 50; i++) {
+				generators.push('number');
+			}
+
+			return deity(...generators, { iterations: 10 }, function (...numbers) {
+				numbers.length.should.equal(50);
+				numbers[0].should.not.equal(numbers[1]);
+
+				numbers.forEach(function (number) {
+					number.should.be.a.Number();
+					number.should.be.within(0, 1);
+				});
+			});
+		});
+	});
+
 	describe('plugins', function () {
 		it('should have the ability to add a function from the function name', function () {
 			function* plugin1() {
@@ -135,12 +194,13 @@ describe('Deity', function () {
 			deity.extend(plugin1);
 
 			let calls = 0;
-			deity('plugin1', { iterations: 3 }, function (one) {
+			return deity('plugin1', { iterations: 3 }, function (one) {
 				one.should.equal('one');
 				calls++;
-			});
-
-			calls.should.equal(3);
+			})
+				.then(function () {
+					calls.should.equal(3);
+				});
 		});
 
 		it('should have the ability to add single plugins', function () {
@@ -151,12 +211,13 @@ describe('Deity', function () {
 			});
 
 			let calls = 0;
-			deity('plugin2', { iterations: 3 }, function (two) {
+			return deity('plugin2', { iterations: 3 }, function (two) {
 				two.should.equal('two');
 				calls++;
-			});
-
-			calls.should.equal(3);
+			})
+				.then(function () {
+					calls.should.equal(3);
+				});
 		});
 
 		it('should have the ability to add a number of plugins from an object', function () {
@@ -174,19 +235,21 @@ describe('Deity', function () {
 			});
 
 			let calls = 0;
-			deity('plugin3', { iterations: 3 }, function (three) {
+			return deity('plugin3', { iterations: 3 }, function (three) {
 				three.should.equal('three');
 				calls++;
-			});
+			})
+				.then(function () {
+					calls.should.equal(3);
 
-			calls.should.equal(3);
-
-			deity('plugin4', { iterations: 2 }, function (four) {
-				four.should.equal('four');
-				calls++;
-			});
-
-			calls.should.equal(5);
+					return deity('plugin4', { iterations: 2 }, function (four) {
+						four.should.equal('four');
+						calls++;
+					})
+						.then(function () {
+							calls.should.equal(5);
+						});
+				});
 		});
 	});
 });
