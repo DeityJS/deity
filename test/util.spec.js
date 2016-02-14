@@ -72,4 +72,23 @@ describe('Utility functions', function () {
 			});
 		});
 	});
+
+	describe('objectAssign()', function () {
+		it('should merge two simple objects together', function () {
+			let result = util.objectAssign({ a: 0 }, { b: 1 });
+			result.should.deepEqual({ a: 0, b: 1 });
+		});
+
+		it('should merge more objects together', function () {
+			let result = util.objectAssign({}, { a: 0 }, { b: 1 }, { c: 2 });
+			result.should.deepEqual({ a: 0, b: 1, c: 2 });
+		});
+
+		it('should modify the original element', function () {
+			let target = { foo: 'bar' };
+			let result = util.objectAssign(target, { hello: 'world '});
+
+			target.should.equal(result);
+		});
+	});
 });

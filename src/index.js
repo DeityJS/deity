@@ -4,7 +4,7 @@ import Range from './range';
 import Generator from './generator';
 import generators from './core-generators';
 
-import objectAssign from 'object-assign';
+import { objectAssign } from './util';
 
 /**
  * Takes a given generator and calls a function a number of times with some

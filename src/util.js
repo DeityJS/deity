@@ -48,3 +48,21 @@ export function getYieldValue(resolved, fn) {
 
 	return fn(resolved);
 }
+
+/**
+ * A minimal implementation of Object.assign(), which is not defined in node
+ * 0.12.
+ *
+ * @param {object} target The element to copy properties to.
+ * @param {...object} sources One or more objects to copy to the target.
+ * @returns {object} Merged objects.
+ */
+export function objectAssign(target, ...sources) {
+	for (let source of sources) {
+		for (let key of Object.keys(source)) {
+			target[key] = source[key];
+		}
+	}
+
+	return target;
+}
