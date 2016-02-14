@@ -128,8 +128,8 @@ describe('Core generators', function () {
 				randomNumber.should.be.within(5, 10);
 
 				let strNumber = randomNumber.toString();
-				(strNumber.indexOf('.') - strNumber.length).should.be.within(-5, -3);
-			});
+				(strNumber.indexOf('.') - strNumber.length).should.equal(-5);
+			}, { allowFailures: 3 });
 		});
 
 		it('should return a number of a given > 1 precision', function () {
@@ -361,9 +361,28 @@ describe('Core generators', function () {
 	});
 });
 
-// @todo: Add an option to allow a small percentage of failures
-function repeat(n, cb) {
+function repeat(n, cb, opts) {
+	if (!opts) {
+		opts = {};
+	}
+
+	if (typeof opts.allowFailures !== 'number') {
+		opts.allowFailures = 0;
+	}
+
+	let failures = 0;
+
 	for (let i = 0; i < n; i++) {
-		cb();
+		try {
+			cb();
+		} catch (e) {
+			failures++;
+
+			if (failures > opts.allowFailures) {
+				throw e;
+			}
+
+			console.log('Error suppressed by repeat handler.');
+		}
 	}
 }
