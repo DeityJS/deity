@@ -6,33 +6,33 @@ import Generator from '../src/generator';
 describe('Generator function', function () {
 	describe('Parsing', function () {
 		it('should handle simple types', function () {
-			let generator = new Generator('string');
+			let generator = new Generator('string', deity.defaultOptions);
 			generator._type.should.equal('string');
 			generator._args.should.deepEqual([]);
 		});
 
 		it('should handle types with single arguments', function () {
-			let generator = new Generator('string:test');
-			generator._type.should.equal('string');
-			generator._args.should.deepEqual(['test']);
+			let generator = new Generator('char:A-F', deity.defaultOptions);
+			generator._type.should.equal('char');
+			generator._args.should.deepEqual(['A-F']);
 		});
 
 		it('should handle types with multiple arguments', function () {
-			let generator = new Generator('string:test:two');
-			generator._type.should.equal('string');
-			generator._args.should.deepEqual(['test', 'two']);
+			let generator = new Generator('oneOf:(number):(char)', deity.defaultOptions);
+			generator._type.should.equal('oneOf');
+			generator._args.should.deepEqual(['number', 'char']);
 		});
 
 		it('should handle types with generator arguments', function () {
-			let generator = new Generator('string:(test:test)');
-			generator._type.should.equal('string');
-			generator._args.should.deepEqual(['test:test']);
+			let generator = new Generator('oneOf:(char:F-L)', deity.defaultOptions);
+			generator._type.should.equal('oneOf');
+			generator._args.should.deepEqual(['char:F-L']);
 		});
 
 		it('should handle types with multiple generator arguments', function () {
-			let generator = new Generator('string:(a:b):(test:test)');
-			generator._type.should.equal('string');
-			generator._args.should.deepEqual(['a:b', 'test:test']);
+			let generator = new Generator('array:(char:S-Z):(number:0-10)', deity.defaultOptions);
+			generator._type.should.equal('array');
+			generator._args.should.deepEqual(['char:S-Z', 'number:0-10']);
 		});
 
 		it('should have a useful error when generator not found', function () {
@@ -44,9 +44,9 @@ describe('Generator function', function () {
 
 	describe('Special cases', function () {
 		it('should handle multipliers', function () {
-			let generator = new Generator('3*(test)');
+			let generator = new Generator('3*(number)');
 			generator._type.should.equal('repeat');
-			generator._args.should.deepEqual(['3', 'test']);
+			generator._args.should.deepEqual(['3', 'number']);
 		});
 
 		it('should handle number ranges', function () {
@@ -83,6 +83,19 @@ describe('Generator function', function () {
 	});
 
 	describe('Resolving', function () {
+		it('should have a resolve function', function () {
+			let generator = new Generator('number:1-5');
+			generator.resolve.should.be.a.Function();
+		});
+
+		it('should return a value', function () {
+			let generator = new Generator('number:1-5');
+			generator.resolve().should.be.a.Number();
+			generator.resolve().should.be.within(1, 5);
+		});
+	});
+
+	describe('asynchronous generators', function () {
 		before(function () {
 			deity.extend('async', function* () {
 				let promise = new Promise(function (resolve) {
@@ -97,18 +110,41 @@ describe('Generator function', function () {
 			});
 		});
 
-		it('should have a resolve function', function () {
-			let generator = new Generator('number:1-5');
-			generator.resolve.should.be.a.Function();
+		it('should have async properties', function () {
+			let generator = new Generator('async');
+			generator._type.should.equal('async');
+			generator.async.should.be.True();
 		});
 
-		it('should return a value', function () {
-			let generator = new Generator('number:1-5');
-			generator.resolve().should.be.a.Number();
-			generator.resolve().should.be.within(1, 5);
+		it('should not have async if not async though', function () {
+			let generator = new Generator('number');
+			generator._type.should.equal('number');
+			generator.async.should.be.False();
 		});
 
-		it('should support asyncronous generators', function (done) {
+		it('should not waste generator results', function () {
+			let count = 0;
+
+			deity.extend('async-counted', function* () {
+				let promise = new Promise(function (resolve) {
+					setTimeout(resolve, 2);
+				});
+
+				while (true) {
+					count++;
+					yield promise.then(function () {
+						return 'test';
+					});
+				}
+			});
+
+			let generator = new Generator('async-counted');
+			generator.resolve();
+
+			count.should.equal(1);
+		});
+
+		it('should resolve', function (done) {
 			let generator = new Generator('async');
 			let time = Date.now();
 

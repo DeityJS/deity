@@ -58,8 +58,14 @@ export default function Generator(generatorString, opts) {
 
 	let generator = generators[type](opts, ...args);
 
+	// We call the generator early to see if it returns a promise or not.
+	let firstValue = generator.next().value;
+	this.async = (typeof firstValue.then === 'function');
+
 	this.resolve = function (cb) {
-		let value = generator.next().value;
+		// We don't want to throw away the result of the early call.
+		let value = firstValue || generator.next().value;
+		firstValue = null;
 
 		if (typeof cb === 'function') {
 			if (typeof value.then === 'function') {
