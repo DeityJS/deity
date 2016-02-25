@@ -60,12 +60,7 @@ export default function deity(...args) {
 			generators[0].resolve(function (val) {
 				try {
 					let fnResult = fn(val);
-
-					if (fnResult && typeof fnResult.then === 'function') {
-						fnResult.then(resolve, reject);
-					} else {
-						resolve(fnResult);
-					}
+					resolve(fnResult);
 				} catch (e) {
 					reject(e);
 				}
@@ -76,26 +71,16 @@ export default function deity(...args) {
 		// Case three: there is more than one generator, and at least one of them
 		// is asynchronous. This is a little more complicated than the other two
 		// cases!
-		promiseFn = function (resolve, reject) {
+		promiseFn = function (resolve) {
 			let generatorPromises = generators.map(function (generator) {
 				return new Promise((resolve) => generator.resolve(resolve));
 			});
 
 			// We can't call the callback until _all_ the generators have returned
-			Promise.all(generatorPromises)
-					.then(function (values) {
-						try {
-							let fnResult = fn(...values);
+			let finalPromise = Promise.all(generatorPromises)
+				.then((values) => fn(...values));
 
-							if (fnResult && typeof fnResult.then === 'function') {
-								fnResult.then(resolve, reject);
-							} else {
-								resolve(fnResult);
-							}
-						} catch (e) {
-							reject(e);
-						}
-					});
+			resolve(finalPromise);
 		};
 	}
 
