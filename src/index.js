@@ -34,28 +34,28 @@ export default function deity(...args) {
 		return new Generator(generatorString, opts);
 	});
 
-	if (generators.length > 1) {
-		promiseFn = function (resolve, reject) {
-			let generatorPromises = generators.map(function (generator) {
-				return new Promise((resolve) => generator.resolve(resolve));
-			});
+	let allSync = generators.every((generator) => !generator.async);
 
-			Promise.all(generatorPromises)
-				.then(function (values) {
-					try {
-						let fnResult = fn(...values);
+	// Case one: one or more specified generators are synchronous. We don't need
+	// to mess about with promises. This is simple.
+	if (allSync) {
+		let returnPromises = [];
 
-						if (fnResult && typeof fnResult.then === 'function') {
-							fnResult.then(resolve, reject);
-						} else {
-							resolve(fnResult);
-						}
-					} catch (e) {
-						reject(e);
-					}
-				});
-		};
-	} else {
+		for (let i = 0; i < opts.iterations; i++) {
+			let vals = generators.map((generator) => generator.resolve());
+			var returnValue = fn(...vals);
+
+			if (returnValue && typeof returnValue.then === 'function') {
+				returnPromises.push(returnValue);
+			}
+		}
+
+		return returnPromises.length ? Promise.all(returnPromises) : Promise.resolve();
+	}
+
+	if (generators.length === 1) {
+		// Case two: there is one asynchronous generator. `promiseFn` is a function
+		// ran on every iterations of the deity function, and returns a promise.
 		promiseFn = function (resolve, reject) {
 			generators[0].resolve(function (val) {
 				try {
@@ -70,6 +70,32 @@ export default function deity(...args) {
 					reject(e);
 				}
 			});
+		};
+	} else {
+
+		// Case three: there is more than one generator, and at least one of them
+		// is asynchronous. This is a little more complicated than the other two
+		// cases!
+		promiseFn = function (resolve, reject) {
+			let generatorPromises = generators.map(function (generator) {
+				return new Promise((resolve) => generator.resolve(resolve));
+			});
+
+			// We can't call the callback until _all_ the generators have returned
+			Promise.all(generatorPromises)
+					.then(function (values) {
+						try {
+							let fnResult = fn(...values);
+
+							if (fnResult && typeof fnResult.then === 'function') {
+								fnResult.then(resolve, reject);
+							} else {
+								resolve(fnResult);
+							}
+						} catch (e) {
+							reject(e);
+						}
+					});
 		};
 	}
 

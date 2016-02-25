@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "npm run build && mocha",
     "eslint": "eslint .",
     "build": "rollup -c",
     "prepublish": "npm run build"

@@ -67,14 +67,12 @@ function runTests(name, deity) {
 			});
 		});
 
-		it('should throw errors', function (done) {
-			deity('number', { iterations: 1 }, function () {
-				throw new Error('test error');
-			})
-					.catch(function (e) {
-						e.message.should.match(/test error/);
-						done();
-					});
+		it('should throw errors', function () {
+			(function () {
+				deity('number', { iterations: 1 }, function () {
+					throw new Error('test error');
+				});
+			}).should.throw(/test error/);
 		});
 
 		it('should allow you to return promises from generators', function () {
