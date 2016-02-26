@@ -30,6 +30,14 @@ export default function deity(...args) {
 		}
 	});
 
+	if (generatorStrings.length === 0) {
+		throw new TypeError('NO_GENERATOR: You must specify at least one generator for Deity');
+	}
+
+	if (typeof fn !== 'function') {
+		throw new TypeError('NO_CALLBACK: You must specify a callback function for Deity');
+	}
+
 	let generators = generatorStrings.map(function (generatorString) {
 		return new Generator(generatorString, opts);
 	});

@@ -127,6 +127,20 @@ function runTests(name, deity) {
 			});
 		});
 
+		describe('Invalid arguments', function () {
+			it('should throw error when no generators specified', function () {
+				(function () {
+					deity(function () {});
+				}).should.throw(/NO_GENERATOR/);
+			});
+
+			it('should throw error when no callback specified', function () {
+				(function () {
+					deity('number');
+				}).should.throw(/NO_CALLBACK/);
+			});
+		});
+
 		describe('multiple generators', function () {
 			it('should support multiple generators', function () {
 				let timesCalled = 0;
