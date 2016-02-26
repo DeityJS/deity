@@ -43,30 +43,30 @@ export default function deity(...args) {
 
 	let promiseArray = [];
 
-	// Case one: all specified generators are synchronous. We don't need to mess
-	// about with promises. This is simple.
-	if (allSync) {
-		for (let i = 0; i < opts.iterations; i++) {
+	// Function for inside the async loop
+	let generatorToPromise = function (generator) {
+		return new Promise((resolve) => generator.resolve(resolve));
+	};
+
+	for (let i = 0; i < opts.iterations; i++) {
+		let maybePromise;
+
+		if (allSync) {
+			// Case one: all specified generators are synchronous. We don't need to mess
+			// about with promises. This is simple.
 			let vals = generators.map((generator) => generator.resolve());
 			// We allow any thrown errors to be thrown: no need to wrap in Promise
-			promiseArray.push(fn(...vals));
-		}
-	} else {
+			maybePromise = fn(...vals);
+		} else {
+			// Case two: one or more generators are asynchronous. We use promises to
+			// make sure that nothing is called early and to handle errors.
 
-		// Case two: one or more generators are asynchronous. We use promises to
-		// make sure that nothing is called early and to handle errors.
-
-		let generatorToPromise = function (generator) {
-			return new Promise((resolve) => generator.resolve(resolve));
-		};
-
-		for (let i = 0; i < opts.iterations; i++) {
 			// We can't call the callback until _all_ the generators have returned
-			let finalPromise = Promise.all(generators.map(generatorToPromise))
-					.then((values) => fn(...values));
-
-			promiseArray.push(finalPromise);
+			maybePromise = Promise.all(generators.map(generatorToPromise))
+				.then((values) => fn(...values));
 		}
+
+		promiseArray.push(maybePromise);
 	}
 
 	return Promise.all(promiseArray);
