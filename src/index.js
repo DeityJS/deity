@@ -16,13 +16,13 @@ import { objectAssign } from './util';
  * @returns {Promise} A promise that resolves when all callbacks are called.
  */
 export default function deity(...args) {
-	let generatorStrings = [];
+	let strings = [];
 	let opts = objectAssign({}, deity.defaultOptions);
 	let fn;
 
 	args.forEach(function (arg) {
 		if (typeof arg === 'string') {
-			generatorStrings.push(arg);
+			strings.push(arg);
 		} else if (typeof arg === 'object') {
 			objectAssign(opts, arg);
 		} else if (typeof arg === 'function') {
@@ -30,7 +30,7 @@ export default function deity(...args) {
 		}
 	});
 
-	if (generatorStrings.length === 0) {
+	if (strings.length === 0) {
 		throw new TypeError('NO_GENERATOR: You must specify at least one generator for Deity');
 	}
 
@@ -38,47 +38,35 @@ export default function deity(...args) {
 		throw new TypeError('NO_CALLBACK: You must specify a callback function for Deity');
 	}
 
-	let generators = generatorStrings.map(function (generatorString) {
-		return new Generator(generatorString, opts);
-	});
-
+	let generators = strings.map((string) => new Generator(string, opts));
 	let allSync = generators.every((generator) => !generator.async);
+
+	let promiseArray = [];
 
 	// Case one: all specified generators are synchronous. We don't need to mess
 	// about with promises. This is simple.
 	if (allSync) {
-		let returnPromises = [];
-
 		for (let i = 0; i < opts.iterations; i++) {
 			let vals = generators.map((generator) => generator.resolve());
-			// We allow any thrown errors to be thrown
-			var returnValue = fn(...vals);
-
-			if (returnValue && typeof returnValue.then === 'function') {
-				returnPromises.push(returnValue);
-			}
+			// We allow any thrown errors to be thrown: no need to wrap in Promise
+			promiseArray.push(fn(...vals));
 		}
+	} else {
 
-		return returnPromises.length ? Promise.all(returnPromises) : Promise.resolve();
-	}
+		// Case two: one or more generators are asynchronous. We use promises to
+		// make sure that nothing is called early and to handle errors.
 
-	// Case two: one or more generators are asynchronous. We use promises to
-	// make sure that nothing is called early and to handle errors.
+		let generatorToPromise = function (generator) {
+			return new Promise((resolve) => generator.resolve(resolve));
+		};
 
-	let promiseArray = [];
+		for (let i = 0; i < opts.iterations; i++) {
+			// We can't call the callback until _all_ the generators have returned
+			let finalPromise = Promise.all(generators.map(generatorToPromise))
+					.then((values) => fn(...values));
 
-	// Some functions for inside the loop
-	let callSpreadValues = (values) => fn(...values);
-	let generatorToPromise = function (generator) {
-		return new Promise((resolve) => generator.resolve(resolve));
-	};
-
-	for (let i = 0; i < opts.iterations; i++) {
-		// We can't call the callback until _all_ the generators have returned
-		let finalPromise = Promise.all(generators.map(generatorToPromise))
-			.then(callSpreadValues);
-
-		promiseArray.push(finalPromise);
+			promiseArray.push(finalPromise);
+		}
 	}
 
 	return Promise.all(promiseArray);
