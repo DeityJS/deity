@@ -91,4 +91,16 @@ describe('Utility functions', function () {
 			target.should.equal(result);
 		});
 	});
+
+	describe('isThenable()', function () {
+		it('should return true when true', function () {
+			var promise = new Promise(function () {});
+			util.isThenable(promise).should.be.True();
+		});
+
+		it('should return false when false', function () {
+			var notPromise = function () {};
+			util.isThenable(notPromise).should.be.False();
+		});
+	});
 });

@@ -1,4 +1,5 @@
 import generators from './core-generators';
+import { isThenable } from './util';
 
 /**
  * Create an object with a resolve method that can be called to generate
@@ -32,6 +33,39 @@ export default function Generator(generatorString, opts) {
 		return new Generator(`literal:${match[0]}`);
 	}
 
+	let [type, ...args] = splitString(generatorString);
+
+	this._type = type;
+	this._args = args;
+
+	if (!generators[type]) {
+		throw new Error(`Generator "${type}" not found`);
+	}
+
+	let generator = generators[type](opts, ...args);
+
+	// We call the generator early to see if it returns a promise or not.
+	let firstValue = generator.next().value;
+	this.async = isThenable(firstValue);
+
+	this.resolve = function (cb) {
+		// We don't want to throw away the result of the early call.
+		let value = firstValue || generator.next().value;
+		firstValue = null;
+
+		if (typeof cb === 'function') {
+			if (isThenable(value)) {
+				value.then(cb);
+			} else {
+				cb(value);
+			}
+		}
+
+		return value;
+	};
+}
+
+function splitString(generatorString) {
 	let splitString = [''];
 	let inBrackets = false;
 
@@ -47,34 +81,5 @@ export default function Generator(generatorString, opts) {
 		}
 	}
 
-	let [type, ...args] = splitString;
-
-	this._type = type;
-	this._args = args;
-
-	if (!generators[type]) {
-		throw new Error(`Generator "${type}" not found`);
-	}
-
-	let generator = generators[type](opts, ...args);
-
-	// We call the generator early to see if it returns a promise or not.
-	let firstValue = generator.next().value;
-	this.async = (typeof firstValue.then === 'function');
-
-	this.resolve = function (cb) {
-		// We don't want to throw away the result of the early call.
-		let value = firstValue || generator.next().value;
-		firstValue = null;
-
-		if (typeof cb === 'function') {
-			if (typeof value.then === 'function') {
-				value.then(cb);
-			} else {
-				cb(value);
-			}
-		}
-
-		return value;
-	};
+	return splitString;
 }

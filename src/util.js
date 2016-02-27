@@ -9,7 +9,7 @@ export function isNumeric(maybeStr) {
 		return false;
 	}
 
-	return Math.abs(maybeStr - parseFloat(maybeStr)) + Number.EPSILON > 0;
+	return Math.abs(maybeStr - parseFloat(maybeStr)) > -Number.EPSILON;
 }
 
 /**
@@ -42,7 +42,7 @@ export function getRandomElementOf(collection) {
  *                      adding the transform function to specified promise.
  */
 export function getYieldValue(resolved, fn) {
-	if (typeof resolved.then === 'function') {
+	if (isThenable(resolved)) {
 		return resolved.then(fn);
 	}
 
@@ -65,4 +65,14 @@ export function objectAssign(target, ...sources) {
 	}
 
 	return target;
+}
+
+/**
+ * Detects whether a given value is a promise or promise-like object.
+ *
+ * @param {*} value The value to check.
+ * @returns {boolean} True if "thenable".
+ */
+export function isThenable(value) {
+	return typeof value.then === 'function';
 }
