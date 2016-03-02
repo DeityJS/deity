@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/callumacrae/deity.git"
+    "url": "git+https://github.com/DeityJS/deity.git"
   },
   "author": "Callum Macrae <callum@macr.ae>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/callumacrae/deity/issues"
+    "url": "https://github.com/DeityJS/deity/issues"
   },
-  "homepage": "https://github.com/callumacrae/deity#readme",
+  "homepage": "https://github.com/DeityJS/deity#readme",
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-es2015-rollup": "^1.1.1",

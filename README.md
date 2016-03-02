@@ -1,4 +1,4 @@
-# Deity [![Build Status](https://travis-ci.org/callumacrae/deity.svg?branch=master)](https://travis-ci.org/callumacrae/deity)
+# Deity [![Build Status](https://travis-ci.org/DeityJS/deity.svg?branch=master)](https://travis-ci.org/DeityJS/deity)
 
 Deity is a property generating tool for use when writing tests. It works well
 with tools like mocha.
