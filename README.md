@@ -28,7 +28,7 @@ deity('string:10-20', 'number:5-7', function (str, num) {
 It also supports plugins, for example the [randomuser.me] plugin:
 
 ```js
-deity('users', function (user) {
+deity('randomuser', function (user) {
 	// user will equal an object representing a randomly generated user
 });
 ```
