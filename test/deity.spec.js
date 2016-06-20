@@ -59,7 +59,7 @@ function runTests(name, deity) {
 
 			promise.then(function () {
 				let difference = Date.now() - time;
-				if (difference < 20 || difference > 80) {
+				if (difference < 18 || difference > 60) {
 					done(new Error('Different was too great: ' + difference));
 				} else {
 					done();
