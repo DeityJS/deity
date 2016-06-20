@@ -25,7 +25,7 @@ deity('string:10-20', 'number:5-7', function (str, num) {
 });
 ```
 
-It also supports plugins, for example the [randomuser.me] plugin:
+It also supports plugins, for example the [randomuser.me plugin]:
 
 ```js
 deity('randomuser', function (user) {
@@ -48,13 +48,13 @@ generator to use (for example, "string" or "number"), followed by some
 arguments to give to the generator, all separated by colons. This argument can
 be repeated as many times as you want.
 
-The second argument is optional, and is an object where you can specify a
+The next argument is optional, and is an object where you can specify a
 number of options to override the defaults with, such as the number of
 time to call the callback.
 
-The final argument should be the callback to be called with the generated data.
-If you specify multiple generator strings, each one will be called as a
-separate argument of the function.
+The final argument should be the testing function to be called with the
+generated data. If you specify multiple generator strings, each one will be
+called as a separate argument of the function.
 
 The Deity function returns a promise which is resolved or rejected depending
 on whether any errors are thrown in the callback function.
@@ -73,6 +73,10 @@ it('should return the same value every time', function () {
 });
 ```
 
+Note that in some cases when both the generator and testing function are
+synchronous, you don't need to return the promise, because the errors will
+be thrown normally.
+
 ## Types of generators
 
 ### string:length
@@ -80,8 +84,8 @@ it('should return the same value every time', function () {
 The string generator generates strings of length n where n is a random number
 between two specified numbers.
 
-`string:5-10` will generate strings of random length between 5 and 10
-characters.
+`string:5-10`, for example, will generate strings of random length between 5
+and 10 characters.
 
 The letters the string is generated from is by default the capital letters A-Z,
 but this can be configured using the `letters` option (just specify a string of
@@ -249,8 +253,10 @@ prefixes:
 
 ## Plugins and custom generators
 
-You can read how to create your own plugin in this article:
-[Creating a Deity plugin]. They're just ES6 generators, though:
+@todo: document how to add generators
+
+You can read how to create your own plugin in this article: (coming soon).
+They're just ES6 generators, though:
 
 ```js
 deity.extend('myGenerator', function* () {
@@ -274,11 +280,10 @@ $ npm install --save-dev deity
 
 ## License
 
-Released under the MIT license
+Released under the MIT license.
 
 
 
-[Introducing Deity]
-[Deity website]
-[randomuser.me]: http://randomuser.me/
-[Creating a Deity plugin]
+[Introducing Deity]: http://macr.ae/article/introducing-deity.html
+[Deity website]: http://deityjs.com/
+[randomuser.me plugin]: https://github.com/DeityJS/deity-randomuser

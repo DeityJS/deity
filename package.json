@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Deity is a property generator for use when writing tests.",
   "main": "dist/deity.min.js",
+  "jsnext:main": "src/index.js",
   "directories": {
     "test": "test"
   },
