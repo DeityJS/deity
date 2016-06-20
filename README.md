@@ -25,7 +25,8 @@ deity('string:10-20', 'number:5-7', function (str, num) {
 });
 ```
 
-It also supports plugins, for example the [randomuser.me plugin]:
+It also supports plugins, for example the
+[randomuser.me plugin][deity-randomuser]:
 
 ```js
 deity('randomuser', function (user) {
@@ -253,7 +254,41 @@ prefixes:
 
 ## Plugins and custom generators
 
-@todo: document how to add generators
+Deity is easily extensible using plugins, and as they are ES6 generators, it is
+pretty simple to write your own.
+
+### Loading a plugin
+
+If you have a plugin you want to load, or you found a plugin on npm by
+searching "deity-plugin", you can use the `deity.extend()` function to load it
+into Deity. Take the following example:
+
+```js
+var deity = require('deity');
+var randomuser = require('deity-randomuser');
+
+deity.extend(randomuser);
+
+deity('randomuser', function (user) {
+	// Do something with user
+});
+```
+
+You can also change the name you want the generator to be added as:
+
+```js
+deity.extend('user', randomuser);
+
+deity('user', function (user) {
+	// Do something with user
+});
+```
+
+There is only one plugin available right now:
+
+- [deity-randomuser] - Uses [randomuser.me] to generate random users.
+
+### Writing a plugin
 
 You can read how to create your own plugin in this article: (coming soon).
 They're just ES6 generators, though:
@@ -265,10 +300,6 @@ deity.extend('myGenerator', function* () {
 	}
 });
 ```
-
-There is only one plugin available right now:
-
-- deity-plugin-randomuser - Uses [randomuser.me] to generate random users.
 
 ## Install
 
@@ -286,4 +317,5 @@ Released under the MIT license.
 
 [Introducing Deity]: http://macr.ae/article/introducing-deity.html
 [Deity website]: http://deityjs.com/
-[randomuser.me plugin]: https://github.com/DeityJS/deity-randomuser
+[deity-randomuser]: https://github.com/DeityJS/deity-randomuser
+[randomuser.me]: https://randomuser.me/
