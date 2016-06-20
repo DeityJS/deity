@@ -59,8 +59,8 @@ function runTests(name, deity) {
 
 			promise.then(function () {
 				let difference = Date.now() - time;
-				if (difference < 20 || difference > 60) {
-					done(new Error('Different was too great'));
+				if (difference < 20 || difference > 80) {
+					done(new Error('Different was too great: ' + difference));
 				} else {
 					done();
 				}
@@ -93,6 +93,8 @@ function runTests(name, deity) {
 		});
 
 		it('should allow you to return failing promises from generators', function (done) {
+			this.timeout(4000);
+
 			let losses = 0;
 
 			let promise = deity('number:1-5', { iterations: 5 }, function () {
