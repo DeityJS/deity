@@ -1,6 +1,6 @@
 {
   "name": "deity",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deity is a property generator for use when writing tests.",
   "main": "dist/deity.min.js",
   "jsnext:main": "src/index.js",
