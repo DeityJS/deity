@@ -50,7 +50,7 @@ Range.prototype.getRandom = function () {
 		let min = this._minCharCode;
 		let max = this._maxCharCode;
 
-		return String.fromCharCode((max - min) * Math.random() + min);
+		return String.fromCharCode((max + 1 - min) * Math.random() + min);
 	}
 };
 
